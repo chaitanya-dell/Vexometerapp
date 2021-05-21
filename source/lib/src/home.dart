@@ -28,6 +28,7 @@ class _HomeState extends State<Home> {
   List<VaccineCentre> _filteredVaccineCentres;
   String _pinCode = "";
   var _vacCentrefilters = [true, true, true, true, true];
+  bool isPinEntered = true;
   //var _vacTypes = [ "Covishield", "Covaxin", "Sputnik V"];
   //var _vacTypesFilter = List.generate(3, (index) => true);
   Map<String, bool> _vaccineTypes = {"Covishield": true, "Covaxin": true, "Sputnik V": true};
@@ -60,9 +61,9 @@ class _HomeState extends State<Home> {
   }
 
   bool _feeTypeFilter(String feeType) {
-    if (_vacCentrefilters[2] && !_vacCentrefilters[3])
+    if (!_vacCentrefilters[2] && _vacCentrefilters[3])
       return feeType == 'Free';
-    else if (!_vacCentrefilters[2] && _vacCentrefilters[3])
+    else if (_vacCentrefilters[2] && !_vacCentrefilters[3])
       return feeType == 'Paid';
     
     return true;
@@ -135,7 +136,7 @@ class _HomeState extends State<Home> {
                 } else {
                   return Align(
                       alignment: Alignment.center,
-                      child: Text("No records found " + _pinCode,
+                      child: Text("Search with your pincode " + _pinCode,
                         textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)
                       ));
                 }
@@ -225,6 +226,7 @@ class _HomeState extends State<Home> {
         ),
         child: TextField(
           controller: _searchController,
+          keyboardType: TextInputType.number,
           style: TextStyle(
             fontSize: 14.0,
             color: Colors.black,
@@ -239,7 +241,7 @@ class _HomeState extends State<Home> {
               _searchController.clear();
             }): null,
             hintStyle: TextStyle(color: Colors.grey),
-            hintText: 'Search center',
+            hintText: 'Search With Your PinCode',
           ),
         ),
       ),
@@ -255,9 +257,17 @@ class _HomeState extends State<Home> {
                       ),
 	        child: Icon(Icons.search, color: Colors.white),
 	          onPressed: () async {
-              Loader.show(context);
-              await _pullRefresh();
-              setState((){});
+              if(_searchController.text.isNotEmpty) {
+                Loader.show(context);
+                await _pullRefresh();
+                setState(() {
+                  isPinEntered = true;
+                });
+              } else {
+                setState(() {
+                  isPinEntered = false;
+                });
+              }
             },
           ),
         )

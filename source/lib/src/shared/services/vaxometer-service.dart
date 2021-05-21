@@ -14,7 +14,7 @@ class VaxometerService {
   }
 
   Future<void> followCentre(String deviceId, int centreId, bool isSubscribe) async {
-    await HttpService.post<bool>(_baseUrl + "Vaxometer/RegisterDevice", {
+    await HttpService.post<bool>(_baseUrl + "Vaxometer/RegisterDevice/" + deviceId, {
       "deviceId": deviceId,
       "date": DateTime.now().toString(),
       "centerId": centreId,
